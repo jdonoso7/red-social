@@ -3,7 +3,9 @@
     <h2>Listado de Usuarios</h2>
     <ul>
       <li v-for="user in userList" :key="user.id">
+        <router-link :to="{ name: 'user-details', params: { id: user.id }}">
           {{ user.name }}
+        </router-link>
       </li>
     </ul>
   </div>
