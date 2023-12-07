@@ -20,9 +20,6 @@ _client.interceptors.request.use(async (config) => {
 
   return { ...config, headers };
 });
-export const session = _session(_client);
-export const feed = _feed(_client);
 
-export { auth };
 const api = { auth, session, feed };
 export { api as default };
