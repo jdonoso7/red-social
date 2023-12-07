@@ -1,5 +1,6 @@
 import axios from 'axios';
 import _users from './users';
+import _photos from './photos';
 
 const _client = axios.create({
   baseURL: "https://jsonplaceholder.typicode.com/",
@@ -15,5 +16,7 @@ _client.interceptors.request.use(async (config) => {
 });
 
 export const users = _users(_client)
-const api = { users };
+export const photos = _photos(_client)
+
+const api = { users, photos };
 export { api as default };

@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2>User Details</h2>
-    <div v-if="user && albums">
+    <div v-if="user && albums && photosList">
       <h3>{{ user.name }}</h3>
       <p><strong>Username:</strong> {{ user.username }}</p>
       <p><strong>Email:</strong> {{ user.email }}</p>
@@ -12,7 +12,7 @@
       <h4>Albums</h4>
       <ul>
         <li v-for="album in albums" :key="album.id">
-          {{ album.title }}
+          {{ album.title }} - <img :id=album.id :src=getAlbumThumbnail(album.id) alt="Thumbnail">
         </li>
       </ul>
     </div>
@@ -25,7 +25,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router'
-import { users } from '../api';
+import { users, photos } from '../api';
 
 export default {
   setup(props) {
@@ -33,6 +33,7 @@ export default {
     const route = useRoute();
     const user = ref(null);
     const albums = ref([]);
+    const photosList = ref([]);
 
     const fetchUserDetails = async () => {
       try {
@@ -41,12 +42,24 @@ export default {
 
         // Fetch user albums
         albums.value = await users.getAlbums(userId.value);
+        
+        // Fetch photos of albums
+        photosList.value = await photos.getAllPhotos();
 
-
+        getAlbumThumbnail
+        
       } catch (error) {
         console.error('Error fetching user details', error);
       }
     };
+    
+    const getAlbumThumbnail = (albumId) => {
+      const photo = photosList.value.find((a) => a.albumId === albumId);
+      if (photo && photo.thumbnailUrl && photo.thumbnailUrl.length > 0) {
+        return photo.thumbnailUrl
+      }
+    };
+
 
     onMounted(() => {
       userId.value = route.params.id;
@@ -55,7 +68,9 @@ export default {
 
     return {
       user,
-      albums
+      albums,
+      photosList,
+      getAlbumThumbnail
     };
   },
 };
